@@ -265,10 +265,10 @@ app.get(
       const dataParam = (data as string) || "today";
       const typeParam = (type as string) || "individual";
 
-      const userId = (req as any).payload.oid as string;
+      const userId = (req as any).payload.userId as string;
 
       // Create cache key
-      const cacheKey = `${dataParam}-${typeParam}`;
+      const cacheKey = `${dataParam}-${typeParam}-${userId ?? "anon"}`;
 
       // Check cache
       const cached = leaderboardCache.get(cacheKey);
@@ -328,6 +328,7 @@ app.get(
               end_date: endDate,
             },
           );
+          console.log(pos);
           const p = pos?.[0];
           if (p) {
             personalProgress = {
@@ -351,6 +352,8 @@ app.get(
           data: { ...result, personal_progress: personalProgress },
           timestamp: Date.now(),
         });
+
+        console.log(personalProgress);
 
         return res.json({ ...result, personal_progress: personalProgress });
       } else {
@@ -398,6 +401,8 @@ app.get(
           data: { ...result, personal_progress: personalProgress },
           timestamp: Date.now(),
         });
+
+        console.log(personalProgress);
 
         res.json({ ...result, personal_progress: personalProgress });
       }

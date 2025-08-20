@@ -70,7 +70,7 @@ app.use(authenticate);
 
 app.get("/api/v1/user-total-today", async (req, res) => {
   try {
-    const { userId } = (req as any).payload.id;
+    const { userId } = (req as any).payload.userId;
     const { data, error } = await supabaseAdmin.rpc(
       "get_total_emails_today_by_user",
       { p_user_id: userId },

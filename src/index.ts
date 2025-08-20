@@ -68,8 +68,24 @@ app.post(
 
 app.use(authenticate);
 
+app.get("/api/v1/user-total-today", async (req, res) => {
+  try {
+    const { userId } = (req as any).payload.id;
+    const { data, error } = await supabaseAdmin.rpc(
+      "get_total_emails_today_by_user",
+      { p_user_id: userId },
+    );
+    if (error) return res.status(500).json({ error: "Database error" });
+
+    return res.json({ total: data ?? 0 });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return res.status(500).json({ error: "Unexpected server error" });
+  }
+});
+
 app.get(
-  "/api/v1/thanos-hp",
+  "/api/v1/team-hp",
   async (req: express.Request, res: express.Response) => {
     try {
       const { data, error } = await supabaseAdmin.rpc("get_total_emails_today");
@@ -91,6 +107,23 @@ app.get(
     }
   },
 );
+
+app.get("/api/v1/top-four", async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin.rpc("get_top4_today");
+    if (error) {
+      console.error("Database err", error);
+      return res.status(500).json({ error: "Database error" });
+    }
+    // data is [{ username: string }] from your RPC
+    return res.json({
+      users: data ?? [],
+    });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return res.status(500).json({ error: "Unexpected server error" });
+  }
+});
 
 app.get(
   "/api/v1/avatar-info",

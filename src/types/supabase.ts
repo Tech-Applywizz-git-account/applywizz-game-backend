@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "13.0.4"
   }
   graphql_public: {
     Tables: {
@@ -22,10 +22,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
+          extensions?: Json
           operationName?: string
           query?: string
           variables?: Json
-          extensions?: Json
         }
         Returns: Json
       }
@@ -379,76 +379,76 @@ export type Database = {
     Functions: {
       get_emails_stats: {
         Args: {
+          last_month_end: string
+          last_month_start: string
+          last_week_end: string
+          last_week_start: string
+          month_start: string
           target_user_id: string
           today_date: string
-          yesterday_date: string
           week_start: string
-          last_week_start: string
-          last_week_end: string
-          month_start: string
-          last_month_start: string
-          last_month_end: string
+          yesterday_date: string
         }
         Returns: {
-          todays_tasks: number
-          yesterdays_tasks: number
-          weeks_tasks: number
+          all_time_tasks: number
+          last_months_tasks: number
           last_weeks_tasks: number
           months_tasks: number
-          last_months_tasks: number
-          all_time_tasks: number
+          todays_tasks: number
+          weeks_tasks: number
+          yesterdays_tasks: number
         }[]
       }
       get_individual_leaderboard: {
         Args: {
-          start_date: string
           end_date: string
           lim?: number
           off?: number
+          start_date: string
         }
         Returns: {
-          username: string
-          user_score: number
           rnk: number
+          user_score: number
+          username: string
         }[]
       }
       get_individual_leaderboard_in_team: {
         Args: {
-          target_team_name: string
-          start_date: string
           end_date: string
           lim?: number
           off?: number
+          start_date: string
+          target_team_name: string
         }
         Returns: {
-          username: string
-          user_score: number
           rnk: number
+          user_score: number
+          username: string
         }[]
       }
       get_individual_position: {
-        Args: { target_user_id: string; start_date: string; end_date: string }
+        Args: { end_date: string; start_date: string; target_user_id: string }
         Returns: {
           rank: number
-          user_score: number
           total_participants: number
+          user_score: number
         }[]
       }
       get_team_leaderboard: {
         Args: {
-          start_date: string
           end_date: string
           lim?: number
           off?: number
+          start_date: string
         }
         Returns: {
+          rnk: number
           team_name: string
           team_score: number
-          rnk: number
         }[]
       }
       get_team_position_for_user: {
-        Args: { target_user_id: string; start_date: string; end_date: string }
+        Args: { end_date: string; start_date: string; target_user_id: string }
         Returns: {
           rank: number
           team_name: string
@@ -456,12 +456,22 @@ export type Database = {
           total_teams: number
         }[]
       }
+      get_top4_today: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          username: string
+        }[]
+      }
       get_total_emails_today: {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_total_emails_today_by_user: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       get_user_graph_30days: {
-        Args: { target_user_id: string; start_date: string }
+        Args: { start_date: string; target_user_id: string }
         Returns: {
           date: string
           tasks: number
@@ -475,7 +485,7 @@ export type Database = {
         }[]
       }
       get_user_graph_week: {
-        Args: { target_user_id: string; start_date: string }
+        Args: { start_date: string; target_user_id: string }
         Returns: {
           date: string
           tasks: number

@@ -365,7 +365,15 @@ export type Database = {
           work_date: string | null
           work_doneby: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "work_history_ca_id_fkey"
+            columns: ["work_doneby"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_emails_all: {
         Row: {
@@ -467,6 +475,10 @@ export type Database = {
         Returns: number
       }
       get_total_emails_today_by_user: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
+      get_user_emails_required: {
         Args: { p_user_id: string }
         Returns: number
       }

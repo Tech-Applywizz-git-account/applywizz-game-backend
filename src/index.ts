@@ -76,7 +76,16 @@ app.get("/api/v1/user-total-today", async (req, res) => {
     );
     if (error) return res.status(500).json({ error: "Database error" });
 
-    return res.json({ hp: data ?? 0, total_hp: 100 });
+    const { data: total, error: err } = await supabaseAdmin.rpc(
+      "get_user_emails_required",
+      { p_user_id: userId },
+    );
+
+    if (err) {
+      throw err;
+    }
+
+    return res.json({ hp: data ?? 0, total_hp: total });
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Unexpected server error" });
@@ -94,11 +103,22 @@ app.get(
         return res.status(500).json({ error: "Database error" });
       }
 
+      const { data: tot, error: error2 } = await supabaseAdmin
+        .from("clients")
+        .select("emails_required");
+
+      if (error2) {
+        return;
+      }
+
+      const totalRequired = tot.reduce((sum, client) => {
+        return sum + (client.emails_required || 0);
+      }, 0);
       const totalTasksDone = data ?? 0;
 
       return res.json({
-        hp: 7000 - totalTasksDone,
-        total_hp: 7000,
+        hp: (totalRequired as number) - totalTasksDone,
+        total_hp: totalRequired,
       });
     } catch (err) {
       console.error("Unexpected error:", err);

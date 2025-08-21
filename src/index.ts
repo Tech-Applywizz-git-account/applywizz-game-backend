@@ -69,14 +69,15 @@ app.use(authenticate);
 
 app.get("/api/v1/user-total-today", async (req, res) => {
   try {
-    const { userId } = (req as any).payload.userId;
+    const userId = (req as any).payload.userId;
     const { data, error } = await supabaseAdmin.rpc(
       "get_total_emails_today_by_user",
       { p_user_id: userId },
     );
+    console.log(error);
     if (error) return res.status(500).json({ error: "Database error" });
 
-    return res.json({ total: data ?? 0 });
+    return res.json({ hp: data ?? 0, total_hp: 100 });
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Unexpected server error" });

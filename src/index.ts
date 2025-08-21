@@ -29,7 +29,7 @@ app.post(
     const { email, password } = req.body;
 
     try {
-      const { data, error } = await supabaseAnon.auth.signInWithPassword({
+      const { data, error } = await supabaseAdmin.auth.signInWithPassword({
         email,
         password,
       });
@@ -38,16 +38,15 @@ app.post(
         return res.status(401).json({ error: error.message });
       }
 
-      const { user } = data!;
-      const userId = user!.id;
-
-      const { data: profile } = await supabaseAdmin
+      const { data: user } = await supabaseAdmin
         .from("users")
-        .select("role")
-        .eq("id", userId)
-        .maybeSingle();
+        .select("id, role")
+        .eq("email", email)
+        .single();
 
-      const role = profile?.role ?? "user";
+      const userId = user?.id;
+
+      const role = user?.role;
 
       const token = jwt.sign(
         {

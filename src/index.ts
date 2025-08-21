@@ -74,7 +74,6 @@ app.get("/api/v1/user-total-today", async (req, res) => {
       "get_total_emails_today_by_user",
       { p_user_id: userId },
     );
-    console.log(error);
     if (error) return res.status(500).json({ error: "Database error" });
 
     return res.json({ hp: data ?? 0, total_hp: 100 });
@@ -125,21 +124,6 @@ app.get("/api/v1/top-four", async (req, res) => {
   }
 });
 
-app.get(
-  "/api/v1/avatar-info",
-  (req: express.Request, res: express.Response) => {
-    return;
-  },
-);
-
-app.post(
-  "/api/v1/avatar-info",
-  (req: express.Request, res: express.Response) => {
-    const avatar_data = req.body.avatar_data;
-    return;
-  },
-);
-
 const leaderboardCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 60 * 1000; // 1 minute in milliseconds
 
@@ -165,7 +149,6 @@ app.get(
         .select("name")
         .eq("id", data.team_id as string)
         .maybeSingle();
-      console.log({ username: data.name, email: data.email, team: team?.name });
 
       res.json({ username: data.name, email: data.email, team: team?.name });
       return;
@@ -361,7 +344,6 @@ app.get(
               end_date: endDate,
             },
           );
-          console.log(pos);
           const p = pos?.[0];
           if (p) {
             personalProgress = {
@@ -385,8 +367,6 @@ app.get(
           data: { ...result, personal_progress: personalProgress },
           timestamp: Date.now(),
         });
-
-        console.log(personalProgress);
 
         return res.json({ ...result, personal_progress: personalProgress });
       } else {
@@ -434,8 +414,6 @@ app.get(
           data: { ...result, personal_progress: personalProgress },
           timestamp: Date.now(),
         });
-
-        console.log(personalProgress);
 
         res.json({ ...result, personal_progress: personalProgress });
       }

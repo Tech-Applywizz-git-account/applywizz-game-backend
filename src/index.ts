@@ -85,7 +85,9 @@ app.get("/api/v1/user-total-today", async (req, res) => {
       throw err;
     }
 
-    return res.json({ hp: data ?? 0, total_hp: total });
+    console.log(data);
+
+    return res.json({ hp: total - data, total_hp: total });
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Unexpected server error" });

@@ -41,6 +41,7 @@ export type Database = {
     Tables: {
       clients: {
         Row: {
+          applywizz_id: string | null
           assigned_ca_id: string | null
           assigned_ca_name: string | null
           client_designation: string | null
@@ -51,18 +52,24 @@ export type Database = {
           emails_required: number | null
           emails_submitted: number | null
           end_time: string | null
+          experience: number | null
           id: string
+          is_active: boolean | null
           jobs_applied: number | null
           last_update: string | null
           name: string | null
           remarks: string | null
+          sponsorship: boolean | null
           start_time: string | null
           status: string | null
           team_id: string | null
           team_lead_name: string | null
+          visa_type: string | null
+          work_auth_details: string | null
           work_done_by: string | null
         }
         Insert: {
+          applywizz_id?: string | null
           assigned_ca_id?: string | null
           assigned_ca_name?: string | null
           client_designation?: string | null
@@ -73,18 +80,24 @@ export type Database = {
           emails_required?: number | null
           emails_submitted?: number | null
           end_time?: string | null
+          experience?: number | null
           id?: string
+          is_active?: boolean | null
           jobs_applied?: number | null
           last_update?: string | null
           name?: string | null
           remarks?: string | null
+          sponsorship?: boolean | null
           start_time?: string | null
           status?: string | null
           team_id?: string | null
           team_lead_name?: string | null
+          visa_type?: string | null
+          work_auth_details?: string | null
           work_done_by?: string | null
         }
         Update: {
+          applywizz_id?: string | null
           assigned_ca_id?: string | null
           assigned_ca_name?: string | null
           client_designation?: string | null
@@ -95,15 +108,20 @@ export type Database = {
           emails_required?: number | null
           emails_submitted?: number | null
           end_time?: string | null
+          experience?: number | null
           id?: string
+          is_active?: boolean | null
           jobs_applied?: number | null
           last_update?: string | null
           name?: string | null
           remarks?: string | null
+          sponsorship?: boolean | null
           start_time?: string | null
           status?: string | null
           team_id?: string | null
           team_lead_name?: string | null
+          visa_type?: string | null
+          work_auth_details?: string | null
           work_done_by?: string | null
         }
         Relationships: [
@@ -125,6 +143,38 @@ export type Database = {
             foreignKeyName: "clients_work_done_by_fkey"
             columns: ["work_done_by"]
             isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_stats: {
+        Row: {
+          avatar_id: string | null
+          ca_id: string
+          coins: number
+          streak: number
+          xp: number
+        }
+        Insert: {
+          avatar_id?: string | null
+          ca_id?: string
+          coins?: number
+          streak?: number
+          xp?: number
+        }
+        Update: {
+          avatar_id?: string | null
+          ca_id?: string
+          coins?: number
+          streak?: number
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_stats_ca_id_fkey"
+            columns: ["ca_id"]
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -199,6 +249,41 @@ export type Database = {
             columns: ["work_log_id"]
             isOneToOne: false
             referencedRelation: "work_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rewards: {
+        Row: {
+          amount_coins: number
+          amount_xp: number
+          ca_id: string
+          day: string
+          id: string
+          kind: string
+        }
+        Insert: {
+          amount_coins?: number
+          amount_xp?: number
+          ca_id: string
+          day: string
+          id?: string
+          kind: string
+        }
+        Update: {
+          amount_coins?: number
+          amount_xp?: number
+          ca_id?: string
+          day?: string
+          id?: string
+          kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rewards_ca_id_fkey"
+            columns: ["ca_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -408,12 +493,9 @@ export type Database = {
         }[]
       }
       get_individual_leaderboard: {
-        Args: {
-          end_date: string
-          lim?: number
-          off?: number
-          start_date: string
-        }
+        Args:
+          | Record<PropertyKey, never>
+          | { end_date: string; lim?: number; off?: number; start_date: string }
         Returns: {
           rnk: number
           user_score: number
@@ -435,7 +517,9 @@ export type Database = {
         }[]
       }
       get_individual_position: {
-        Args: { end_date: string; start_date: string; target_user_id: string }
+        Args:
+          | { end_date: string; start_date: string; target_user_id: string }
+          | { user_id: string }
         Returns: {
           rank: number
           total_participants: number
@@ -443,12 +527,9 @@ export type Database = {
         }[]
       }
       get_team_leaderboard: {
-        Args: {
-          end_date: string
-          lim?: number
-          off?: number
-          start_date: string
-        }
+        Args:
+          | Record<PropertyKey, never>
+          | { end_date: string; lim?: number; off?: number; start_date: string }
         Returns: {
           rnk: number
           team_name: string
@@ -456,7 +537,9 @@ export type Database = {
         }[]
       }
       get_team_position_for_user: {
-        Args: { end_date: string; start_date: string; target_user_id: string }
+        Args:
+          | { end_date: string; start_date: string; target_user_id: string }
+          | { user_id: string }
         Returns: {
           rank: number
           team_name: string
@@ -502,6 +585,10 @@ export type Database = {
           date: string
           tasks: number
         }[]
+      }
+      run_daily_cron: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
     }
     Enums: {

@@ -65,6 +65,29 @@ app.post(
   },
 );
 
+app.post("/api/v1/cron", async (req, res) => {
+  if (req.query.key !== process.env.CRON_KEY) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+  try {
+    // call the Postgres function with no args
+    const { data, error } = await supabaseAdmin.rpc("run_daily_cron");
+
+    if (error) {
+      console.error("run_daily_cron error:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(202).json({
+      accepted: true,
+      result: data, // { day, holiday, processed }
+    });
+  } catch (err: any) {
+    console.error("Unexpected error in cron:", err);
+    return res.status(500).json({ error: err.message || "Unexpected error" });
+  }
+});
+
 app.use(authenticate);
 
 app.get("/api/v1/user-total-today", async (req, res) => {
@@ -307,6 +330,12 @@ app.get(
 
       // Create cache key
       const cacheKey = `${dataParam}-${typeParam}-${userId ?? "anon"}`;
+
+      if (dataParam === "today") {
+        if (typeParam === "individual") {
+        } else {
+        }
+      }
 
       // Check cache
       const cached = leaderboardCache.get(cacheKey);

@@ -130,7 +130,8 @@ app.get(
 
       const { data: tot, error: error2 } = await supabaseAdmin
         .from("clients")
-        .select("emails_required");
+        .select("emails_required")
+        .eq("is_active", true);
 
       if (error2) {
         return;

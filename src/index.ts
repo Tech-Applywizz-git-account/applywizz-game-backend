@@ -90,6 +90,29 @@ app.post("/api/v1/cron", async (req, res) => {
 
 app.use(authenticate);
 
+app.get("/api/v1/coinsxp", async (req, res) => {
+  try {
+    const userId = (req as any).payload.userId;
+    const { data, error } = await supabaseAdmin
+      .from("game_stats")
+      .select("coins, xp")
+      .eq("ca_id", userId)
+      .single();
+
+    console.log(data);
+    // if (error) {
+    //   console.log("DB error:", error);
+    //   return res.status(500).json({ error: "Database error" });
+    // }
+    return res.json({ coins: data?.coins || 0, xp: data?.xp || 0});
+
+  }
+  catch (err) {
+    console.error("Unexpected error:", err);
+    return res.status(500).json({ error: "Unexpected server error" });
+  }
+});
+
 app.get("/api/v1/user-total-today", async (req, res) => {
   try {
     const userId = (req as any).payload.userId;

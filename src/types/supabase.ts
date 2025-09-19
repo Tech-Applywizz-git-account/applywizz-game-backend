@@ -180,6 +180,40 @@ export type Database = {
           },
         ]
       }
+
+      purchases: {
+        Row: {
+          id: string,
+          ca_id: string,
+          item_name: string,
+          item_type: string,
+          purchased_at: string  
+        }
+        Insert: {
+          id?: string
+          ca_id?: string
+          item_name?: string
+          item_type?: string
+          purchased_at?: string 
+        }
+        Update: {
+          id?: string
+          ca_id?: string
+          item_name?: string
+          item_type?: string
+          purchased_at?: string 
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_ca_id_fkey"
+            columns: ["ca_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
       incentives: {
         Row: {
           badge: string | null

@@ -90,12 +90,6 @@ app.post("/api/v1/cron", async (req, res) => {
 
 app.use(authenticate);
 
-app.post("/api/v1/select-avatar", async (req, res) => {
-  const userId = (req as any).payload.userId;
-  const { avatarName } = req.body;
-
-});
-
 app.get("/api/v1/coinsxp", async (req, res) => {
   try {
     const userId = (req as any).payload.userId;
@@ -118,7 +112,7 @@ app.get("/api/v1/coinsxp", async (req, res) => {
     return res.status(500).json({ error: "Unexpected server error" });
   }
 });
-
+-
 app.post("/api/v1/purchase", async (req, res) => {
   try {
     const userId = (req as any).payload.userId;
@@ -144,6 +138,16 @@ app.post("/api/v1/purchase", async (req, res) => {
 
     if (updateError) {
       console.log("DB error:", updateError);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    const date = formatLocalDate(new Date());
+
+    const { error: insertError } = await supabaseAdmin.from("purchases")
+      .insert({ ca_id: userId, item_name, item_type, purchase_date: date });
+
+    if (insertError) {
+      console.log("DB error:", insertError);
       return res.status(500).json({ error: "Database error" });
     }
   }

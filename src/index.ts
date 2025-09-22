@@ -140,6 +140,17 @@ app.post("/api/v1/purchase", async (req, res) => {
       console.log("DB error:", updateError);
       return res.status(500).json({ error: "Database error" });
     }
+
+    const date = formatLocalDate(new Date());
+
+    const { error: insertError } = await supabaseAdmin
+      .from("purchases")
+      .insert({ ca_id: userId, item_name, item_type, purchase_date: date });
+
+    if (insertError) {
+      console.log("DB error:", insertError);
+      return res.status(500).json({ error: "Database error" });
+    }
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Unexpected server error" });

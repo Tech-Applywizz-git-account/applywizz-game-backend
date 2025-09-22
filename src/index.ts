@@ -65,29 +65,6 @@ app.post(
   },
 );
 
-app.post("/api/v1/cron", async (req, res) => {
-  if (req.query.key !== process.env.CRON_KEY) {
-    return res.status(401).json({ error: "unauthorized" });
-  }
-  try {
-    // call the Postgres function with no args
-    const { data, error } = await supabaseAdmin.rpc("run_daily_cron");
-
-    if (error) {
-      console.error("run_daily_cron error:", error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    return res.status(202).json({
-      accepted: true,
-      result: data, // { day, holiday, processed }
-    });
-  } catch (err: any) {
-    console.error("Unexpected error in cron:", err);
-    return res.status(500).json({ error: err.message || "Unexpected error" });
-  }
-});
-
 app.use(authenticate);
 
 app.get("/api/v1/coinsxp", async (req, res) => {
@@ -145,12 +122,16 @@ app.post("/api/v1/purchase", async (req, res) => {
 
     const { error: insertError } = await supabaseAdmin
       .from("purchases")
-      .insert({ ca_id: userId, item_name, item_type, purchase_date: date });
+      .insert({ ca_id: userId, item_name, item_type, purchased_at: date });
 
     if (insertError) {
       console.log("DB error:", insertError);
       return res.status(500).json({ error: "Database error" });
     }
+
+    return res.json({
+      message: "purchase done",
+    });
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Unexpected server error" });

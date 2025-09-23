@@ -138,6 +138,56 @@ app.post("/api/v1/purchase", async (req, res) => {
   }
 });
 
+app.get("/api/v1/get-selected-avatar", async (req, res) => {
+  const userId = (req as any).payload.userId;
+
+  const { data, error } = await supabaseAdmin
+    .from("game_stats")
+    .select("avatar_id")
+    .eq("ca_id", userId)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: "Database error" });
+  }
+
+  if (data === null) {
+    return res.json({
+      avatar: "Fighter",
+    });
+  }
+
+  return res.json({
+    avatar: data.avatar_id,
+  });
+});
+
+app.get("/api/v1/badge", async (req, res) => {
+  const userId = (req as any).payload.userId;
+
+  const { data, error } = await supabaseAdmin
+    .from("game_stats")
+    .select("streak, badge")
+    .eq("ca_id", userId)
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: "Database error" });
+  }
+
+  if (data === null) {
+    return res.json({
+      badge: null,
+      streak: 0,
+    });
+  }
+
+  return res.json({
+    badge: data.badge || null,
+    streak: data.streak || 0,
+  });
+});
+
 app.get("/api/v1/own", async (req, res) => {
   try {
     const userId = (req as any).payload.userId;

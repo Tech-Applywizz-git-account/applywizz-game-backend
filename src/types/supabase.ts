@@ -67,6 +67,7 @@ export type Database = {
           visa_type: string | null
           work_auth_details: string | null
           work_done_by: string | null
+          work_done_ca_name: string | null
         }
         Insert: {
           applywizz_id?: string | null
@@ -95,6 +96,7 @@ export type Database = {
           visa_type?: string | null
           work_auth_details?: string | null
           work_done_by?: string | null
+          work_done_ca_name?: string | null
         }
         Update: {
           applywizz_id?: string | null
@@ -123,6 +125,7 @@ export type Database = {
           visa_type?: string | null
           work_auth_details?: string | null
           work_done_by?: string | null
+          work_done_ca_name?: string | null
         }
         Relationships: [
           {
@@ -151,6 +154,7 @@ export type Database = {
       game_stats: {
         Row: {
           avatar_id: string | null
+          badge: string | null
           ca_id: string
           coins: number
           streak: number
@@ -158,6 +162,7 @@ export type Database = {
         }
         Insert: {
           avatar_id?: string | null
+          badge?: string | null
           ca_id?: string
           coins?: number
           streak?: number
@@ -165,6 +170,7 @@ export type Database = {
         }
         Update: {
           avatar_id?: string | null
+          badge?: string | null
           ca_id?: string
           coins?: number
           streak?: number
@@ -180,40 +186,6 @@ export type Database = {
           },
         ]
       }
-
-      purchases: {
-        Row: {
-          id: string,
-          ca_id: string,
-          item_name: string,
-          item_type: string,
-          purchased_at: string  
-        }
-        Insert: {
-          id?: string
-          ca_id?: string
-          item_name?: string
-          item_type?: string
-          purchased_at?: string 
-        }
-        Update: {
-          id?: string
-          ca_id?: string
-          item_name?: string
-          item_type?: string
-          purchased_at?: string 
-        }
-        Relationships: [
-          {
-            foreignKeyName: "purchases_ca_id_fkey"
-            columns: ["ca_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-
       incentives: {
         Row: {
           badge: string | null
@@ -249,6 +221,38 @@ export type Database = {
           {
             foreignKeyName: "incentives_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      purchases: {
+        Row: {
+          ca_id: string
+          id: string
+          item_name: string
+          item_type: string
+          purchased_at: string
+        }
+        Insert: {
+          ca_id: string
+          id?: string
+          item_name: string
+          item_type: string
+          purchased_at?: string
+        }
+        Update: {
+          ca_id?: string
+          id?: string
+          item_name?: string
+          item_type?: string
+          purchased_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_ca_id_fkey"
+            columns: ["ca_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -620,7 +624,7 @@ export type Database = {
           tasks: number
         }[]
       }
-      run_daily_cron: {
+      run_reset_button: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }

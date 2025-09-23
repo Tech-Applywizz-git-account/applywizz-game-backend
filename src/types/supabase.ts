@@ -531,10 +531,14 @@ export type Database = {
         }[]
       }
       get_individual_leaderboard: {
-        Args:
-          | Record<PropertyKey, never>
-          | { end_date: string; lim?: number; off?: number; start_date: string }
+        Args: {
+          end_date: string
+          lim?: number
+          off?: number
+          start_date: string
+        }
         Returns: {
+          badge: string
           rnk: number
           user_score: number
           username: string
@@ -565,9 +569,12 @@ export type Database = {
         }[]
       }
       get_team_leaderboard: {
-        Args:
-          | Record<PropertyKey, never>
-          | { end_date: string; lim?: number; off?: number; start_date: string }
+        Args: {
+          end_date: string
+          lim?: number
+          off?: number
+          start_date: string
+        }
         Returns: {
           rnk: number
           team_name: string
@@ -588,6 +595,7 @@ export type Database = {
       get_top4_today: {
         Args: Record<PropertyKey, never>
         Returns: {
+          avatar_id: string
           username: string
         }[]
       }

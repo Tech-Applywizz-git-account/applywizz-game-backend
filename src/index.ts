@@ -604,6 +604,7 @@ app.get(
             username: i.username ?? "Unknown",
             user_score: i.user_score,
             rank: i.rnk,
+            badge: i.badge,
           })),
         };
 

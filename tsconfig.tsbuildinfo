@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/middleware.ts","./src/types/supabase.ts","./src/utils/date.ts"],"version":"5.8.3"}
+{"root":["./src/index.ts","./src/config/supabase.ts","./src/middleware/auth.ts","./src/routes/auth.routes.ts","./src/routes/game.routes.ts","./src/routes/leaderboard.routes.ts","./src/routes/user.routes.ts","./src/types/supabase.ts","./src/utils/date.ts"],"version":"5.8.3"}

@@ -8,32 +8,34 @@ router.get(
   "/team-hp",
   async (req: express.Request, res: express.Response) => {
     try {
-      const { data, error } = await supabaseAdmin.rpc("get_total_emails_today");
+      const userId = (req as any).payload.userId as string;
+      const { count: completed_clients, error } = await supabaseAdmin
+        .from("clients")
+        .select("*", { count: "exact", head: true }) 
+        .eq("status", "Completed")
+        .eq("is_active", true) ;
+
+        const { count: total_clients , error: error2 } = await supabaseAdmin
+        .from("clients")
+        .select("*", { count: "exact", head: true }) 
+        .eq("is_active", true) ;
 
       if (error) {
         console.error("Database error:", error);
         return res.status(500).json({ error: "Database error" });
       }
 
-      const { data: tot, error: error2 } = await supabaseAdmin
-        .from("clients")
-        .select("emails_required")
-        .eq("is_active", true);
+      const factor = 21
 
-      if (error2) {
-        return;
-      }
+      let cc = completed_clients ?? 0;
+      let tc = total_clients ?? 0;
 
-      const totalRequired = tot.reduce((sum, client) => {
-        return sum + (client.emails_required || 0);
-      }, 0);
-      const totalTasksDone = data ?? 0;
+      cc *= factor;
+      tc *= factor;
 
-      return res.json({
-        hp: (totalRequired as number) - totalTasksDone,
-        total_hp: totalRequired,
-      });
-    } catch (err) {
+      return res.json({ hp: cc, total_hp: tc });
+    }
+    catch (err) {
       console.error("Unexpected error:", err);
       return res.status(500).json({ error: "Unexpected server error" });
     }
